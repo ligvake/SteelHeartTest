@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 10
-  jumpheight: 19
+  jumpForce: 19
   groundCheckObject: {fileID: 7069227434865717700}
 --- !u!50 &7069227435134605264
 Rigidbody2D:

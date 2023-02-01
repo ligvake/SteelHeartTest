@@ -14,7 +14,8 @@ public class PlayerScript : MonoBehaviour
     bool isGrounded;
     [SerializeField]
     private float jumpForce = 5f;
-    public Transform groundCheckObject;
+    [SerializeField]
+    private Transform groundCheckObject;
 
     private Rigidbody2D rb;
 
@@ -57,7 +58,6 @@ public class PlayerScript : MonoBehaviour
     private void Flip()
     {
         flipCharacter = !flipCharacter;
-
         spriteRenderer.flipX = flipCharacter;
     }
 
