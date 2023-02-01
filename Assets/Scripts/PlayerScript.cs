@@ -15,7 +15,9 @@ public class PlayerScript : MonoBehaviour
     [SerializeField]
     private float jumpForce = 5f;
     [SerializeField]
-    private Transform groundCheckObject;
+    private Transform groundCheckObject;  // объект, от которого происходит BoxCast
+    private float groundCheckBoxWidth = 1f;  // ширина BoxCast
+    private float groundCheckBoxDistance = 0.1f;  // расстояние для BoxCast
 
     private Rigidbody2D rb;
 
@@ -61,19 +63,42 @@ public class PlayerScript : MonoBehaviour
         spriteRenderer.flipX = flipCharacter;
     }
 
-    void CheckGround()
+    void OnDrawGizmos()
     {
-        // рисуем луч, видимый только в сцене, для дебага
-        Debug.DrawRay(groundCheckObject.position, -Vector2.up / 10, Color.red);
-        
+        // рисуем границы бокс каста, видимые только в сцене, для дебага
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(
+            groundCheckObject.position - new Vector3(0, groundCheckBoxDistance / 2, 0),
+            new Vector3(groundCheckBoxWidth, groundCheckBoxDistance, 1f)
+        );
+    }
+
+    void CheckGround()
+    {        
         // производим рейкаст вниз на 0.1 для проверки наличия поверхности
-        RaycastHit2D hit = Physics2D.Raycast(groundCheckObject.position, -Vector2.up, 0.1f);
+        RaycastHit2D hit = Physics2D.BoxCast(
+            new Vector2(groundCheckObject.position.x, groundCheckObject.position.y),
+            new Vector2(groundCheckBoxWidth, 0.001f), 
+            0, 
+            Vector2.down,
+            groundCheckBoxDistance,
+            LayerMask.GetMask("Ground")
+        );
+        
         if (hit.collider == null)
         {
             isGrounded = false;
-        } else {
+        } 
+        else 
+        {
             // Debug.Log(hit.collider.name);
-            isGrounded = true;
+
+            /*  
+                Дополнительная проверка, чтобы игрок не мог прыгнуть 
+                уже в прыжке, например на середине платформы 
+            */
+            if (rb.velocity.y < 0.001f)
+                isGrounded = true;
         }
     }
 
